@@ -44,7 +44,7 @@ my own numbers were wrong.
 I built a multi-agent CVE triage system, then built the harness that proved it shouldn't ship.
 
 A deterministic semver-containment check matched the agent on **every metric** — delta `0.0000`,
-95% CI `[0, 0]` — and ran about **278x faster**. I wrote up the null result and recommended the
+95% CI `[0, 0]`, n = 38 — and ran about **149x faster**. I wrote up the null result and recommended the
 script.
 
 The instrument worked. That's the point.
@@ -52,6 +52,21 @@ The instrument worked. That's the point.
 ---
 
 ### Projects
+
+#### [continual-harness](https://github.com/deepanathanrajendiran-hub/continual-harness) &nbsp;·&nbsp; coding agents that learn from finished tasks
+A harness that runs inside Codex and Claude Code as two skills: **refine**, the learning loop, and
+**horizon**, which keeps goal, verification and next-action state across sessions. One shared
+Python implementation, standard library only. In a pre-registered SWE-bench Pro study, notes
+Refine wrote in Claude Code were frozen and given to a different agent, mini-swe-agent with
+DeepSeek V4 Flash capped at 20 steps. On 44 held-out openlibrary tasks, run 3 times each, pass rate
+went **58% → 78%** (77 vs 103 of 132 runs), mean per-task gain +0.197 (95% CI +0.11 to +0.28),
+**p = 0.0001**. Every run was re-graded on a pristine image with only its patch applied: 264 of 264
+agreed. A hidden-test audit, not pre-registered, flagged 13 runs; scoring all 13 as failures still
+gives p = 0.0003. Scope: one repository, one model, a 20-step cap. Pre-registered gates stopped
+both Claude Code studies (Sonnet 29/30, Haiku 30/30 on practice tasks) before the test phase,
+because there was no room to improve. The skills now live in
+[refine](https://github.com/deepanathanrajendiran-hub/refine) and
+[horizon](https://github.com/deepanathanrajendiran-hub/horizon); this repo is the research record.
 
 #### [depguard](https://github.com/deepanathanrajendiran-hub/depguard) &nbsp;·&nbsp; CVE triage agent + eval harness
 LangGraph planner/executor, six tools published over **MCP**, and a four-predicate mechanical
@@ -61,20 +76,21 @@ OpenTelemetry into Langfuse. Ablation and reproduction steps in the repo.
 
 #### [sft-code-review](https://github.com/deepanathanrajendiran-hub/sft-code-review) &nbsp;·&nbsp; post-training a 7B code reviewer
 LoRA fine-tune of Qwen2.5-Coder-7B on 11,309 distilled reasoning traces. A blind three-vote judge
-preferred it over the base model in **86% of 200** head-to-heads, with **632 records from 88
-repositories** held out of training. Hallucinated identifiers halved by checking every identifier
+preferred it over the base model in **86% of 200** in-distribution head-to-heads, and in **79.0%**
+of **632 records from 88 unseen repositories** (95% CI [75.8%, 82.1%]). Hallucinated identifiers halved by checking every identifier
 the model named against the actual diff — a string match, not another model.
 
-> **Read the RL arc.** Three runs regressed. I wrote the conclusion *"RL is dead for this task"* —
+> **Read the RL arc.** Three runs regressed. I wrote the conclusion *"RL is dead"* —
 > then found five silent pipeline defects behind it: TRL's `GRPOConfig` left-truncating ~87% of
 > prompts, and PEFT computing the KL reference with adapters disabled, anchoring to the base model
-> instead of my SFT policy. The conclusion wasn't wrong so much as unearned. The re-run and the
-> retraction are both in the repo.
+> instead of my SFT policy. The conclusion wasn't wrong so much as unearned. The clean GRPO re-run,
+> with a verifiable reward, cut false flagging on clean diffs from 0.749 to 0.658 at recall parity.
+> The re-run and the retraction are both in the repo.
 
 #### [socratic-ot-tutor](https://github.com/deepanathanrajendiran-hub/socratic-ot-tutor) &nbsp;·&nbsp; Socratic tutor, shipped
 Built for a graduate NLP course and used by **50 students** at UB. LangGraph over a Corrective RAG
 pipeline that grades and reranks its own sources before answering. FastAPI + SSE on Cloud Run,
-Next.js on Vercel. Cold start cut from ~4 min to ~20 s by baking weights into the image.
+Next.js on Vercel. Cold start cut from 3–4 min to ~15–25 s by baking weights into the image.
 
 #### [eia-energy-mcp](https://github.com/deepanathanrajendiran-hub/eia-energy-mcp) &nbsp;·&nbsp; MCP server
 US power-plant data (EIA-860, EIA-923) exposed as tools an agent can call.
