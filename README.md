@@ -39,15 +39,18 @@ my own numbers were wrong.
 
 ---
 
-### 🔬 The result I'm proudest of is a negative one
+### 🔬 The result I'm proudest of is one I tried hard to break
 
-I built a multi-agent CVE triage system, then built the harness that proved it shouldn't ship.
+I built **Refine**, a learning loop for Claude Code and Codex that turns each finished task into a
+small, reusable note. Then I tested whether those notes help a *different* agent.
 
-A deterministic semver-containment check matched the agent on **every metric** — delta `0.0000`,
-95% CI `[0, 0]`, n = 38 — and ran about **149x faster**. I wrote up the null result and recommended the
-script.
+In a pre-registered SWE-bench Pro study, notes written in Claude Code were frozen and handed to
+mini-swe-agent (DeepSeek V4 Flash, 20 steps). On 44 held-out tasks, pass rate went from
+**58% to 78%**, p = `0.0001`. Every patch was re-graded on a pristine image (264 of 264 agreed),
+and when an audit flagged 13 runs, I scored all 13 as failures: still p = `0.0003`.
 
-The instrument worked. That's the point.
+The same rules stopped both Claude Code studies before testing, because those agents already
+passed nearly everything. I wanted a result that was allowed to fail. That's the point.
 
 ---
 
@@ -72,7 +75,9 @@ because there was no room to improve. The skills now live in
 LangGraph planner/executor, six tools published over **MCP**, and a four-predicate mechanical
 checker that grades every verdict with **no model in the correctness path**. The eval is
 merge-blocking in CI — a one-line planner regression turns the build red. Every run traced with
-OpenTelemetry into Langfuse. Ablation and reproduction steps in the repo.
+OpenTelemetry into Langfuse. The harness then showed a deterministic semver check matched the
+agent on every metric (n = 38) at about **149x** the speed, so I recommended the script.
+Ablation and reproduction steps in the repo.
 
 #### [sft-code-review](https://github.com/deepanathanrajendiran-hub/sft-code-review) &nbsp;·&nbsp; post-training a 7B code reviewer
 LoRA fine-tune of Qwen2.5-Coder-7B on 11,309 distilled reasoning traces. A blind three-vote judge
