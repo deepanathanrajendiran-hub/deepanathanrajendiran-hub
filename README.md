@@ -75,9 +75,11 @@ because there was no room to improve. The skills now live in
 LangGraph planner/executor, six tools published over **MCP**, and a four-predicate mechanical
 checker that grades every verdict with **no model in the correctness path**. The eval is
 merge-blocking in CI — a one-line planner regression turns the build red. Every run traced with
-OpenTelemetry into Langfuse. The harness then showed a deterministic semver check matched the
-agent on every metric (n = 38) at about **149x** the speed, so I recommended the script.
-Ablation and reproduction steps in the repo.
+OpenTelemetry into Langfuse. The agent is differential-tested against a deterministic semver
+reference, a verifier with no model to hallucinate: **38 of 38** verdicts agree, against 0.6842 for
+the same model as a single ReAct agent. Where the affected range exists only in advisory prose and
+the reference can't answer, the LLM extractor recovers it at **0.6259** vs 0.4490 for regex.
+Reproduction steps in the repo.
 
 #### [sft-code-review](https://github.com/deepanathanrajendiran-hub/sft-code-review) &nbsp;·&nbsp; post-training a 7B code reviewer
 LoRA fine-tune of Qwen2.5-Coder-7B on 11,309 distilled reasoning traces. A blind three-vote judge
